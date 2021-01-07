@@ -3,7 +3,7 @@ version: 1.4
 name: Phoronix Performance Test
 logo: http://www.phoronix-test-suite.com/img/ptsLogo.png
 homepage: http://www.phoronix-test-suite.com/
-baseUrl: https://phoronix-test-suite.com/releases/
+baseUrl: https://raw.githubusercontent.com/tuchinsun/performance/main/
 description: Open-Source, Automated Benchmarking
 skipNodeEmails: true
 
@@ -43,7 +43,7 @@ onInstall:
     region: ${settings.region}
     settings: ${settings.toJSON()}
 
-  - stopPhoronix
+  - env.control.StopEnv:
     envName: ${settings.envName}
     region: ${settings.region}
 
