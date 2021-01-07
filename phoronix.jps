@@ -25,6 +25,8 @@ onInstall:
   - if ( ${settings.cpu} ): runCpuTest
   - if ( ${settings.ram} ): runRamTest
   - if ( ${settings.disk} ): runDiskTest
+  - getResult
+  - stopPhoronix
 
 actions:
   installPhoronix:
@@ -63,6 +65,30 @@ actions:
       - cmd[docker]: pgrep phoronix-test-s || echo 0
       - if (${response.out} > 0):
          sleep: ${globals.timeout}
+
+  getResult:
+    - cmd [docker]: /usr/local/bin/pts-result.sh --cpu-result
+    - setGlobals:
+        cpu: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --ram-result
+    - setGlobals:
+        ram: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --hdd-result
+    - setGlobals:
+        disk: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --total-rate
+    - setGlobals:
+        rate: ${response.out}
+    - cmd [docker]: date +"%F %T"
+    - setGlobals:
+        date: ${response.out}
+    - log:
+         RESULTS [ ${env.region} ] CPU - ${globals.cpu} RAM - ${globals.ram} DISK - ${globals.disk} RATE - ${globals.rate}
+
+
+  stopPhoronix:
+    - jelastic.environment.control.StopEnv:
+        appid: ${env.appid}
 
 success: |
      ### Phoronix Test Finished

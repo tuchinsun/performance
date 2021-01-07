@@ -38,7 +38,7 @@ settings:
 
 
 onInstall:
-  - install: https://raw.githubusercontent.com/tuchinsun/phoronix/master/phoronix.jps
+  - install: phoronix.jps
     envName: ${settings.envName}
     region: ${settings.region}
     settings: ${settings.toJSON()}
@@ -50,30 +50,6 @@ onInstall:
   - env.control.DeleteEnv:
       envName: ${settings.envName}
       password: ${settings.password}
-
-
-actions:
-  getResult:
-    - cmd [docker]: /usr/local/bin/pts-result.sh --cpu-result
-    - setGlobals:
-        cpu: ${response.out}
-    - cmd [docker]: /usr/local/bin/pts-result.sh --ram-result
-    - setGlobals:
-        ram: ${response.out}
-    - cmd [docker]: /usr/local/bin/pts-result.sh --hdd-result
-    - setGlobals:
-        disk: ${response.out}
-    - cmd [docker]: /usr/local/bin/pts-result.sh --total-rate
-    - setGlobals:
-        rate: ${response.out}
-    - cmd [docker]: date +"%F %T"
-    - setGlobals:
-        date: ${response.out}
-    - log:
-         RESULTS [ ${env.region} ] CPU - ${globals.cpu} RAM - ${globals.ram} DISK - ${globals.disk} RATE - ${globals.rate}
-  stopPhoronix:
-    - jelastic.environment.control.StopEnv:
-        appid: ${env.appid}
 
 success: |
     ${response.successText}
