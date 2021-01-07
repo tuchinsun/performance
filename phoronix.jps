@@ -1,0 +1,76 @@
+type: install
+version: 1.4
+name: Phoronix Performance Test
+logo: http://www.phoronix-test-suite.com/img/ptsLogo.png
+homepage: http://www.phoronix-test-suite.com/
+baseUrl: https://phoronix-test-suite.com/releases/
+description: Open-Source, Automated Benchmarking
+skipNodeEmails: true
+
+globals:
+    iteration:  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    timeout:    150000
+    vPhoronix:  10.0.1
+    vCray:      1.1.1
+    vRamspeed:  1.4.3
+    vFio:       1.13.2
+
+nodes:
+- cloudlets: 10
+  displayName: Phoronix Test Suite
+  image: jelastic/centosvps:7.9
+
+onInstall:
+  - installPhoronix
+  - if ( ${settings.cpu} ): runCpuTest
+  - if ( ${settings.ram} ): runRamTest
+  - if ( ${settings.disk} ): runDiskTest
+
+actions:
+  installPhoronix:
+    cmd [docker]: |-
+      mkdir -p /pts
+      yum install -y autoconf automake bc bzip2 curl epel-release expat-devel gcc gcc-c++ glibc-static jq jsoup libaio-devel make patch php-cli php-xml unzip wget >/dev/null 2>&1
+      wget -qO- https://phoronix-test-suite.com/releases/phoronix-test-suite-${globals.vPhoronix}.tar.gz | tar -xz --strip-components=1 -C /pts
+      wget -qO /usr/local/bin/pts-result.sh https://raw.githubusercontent.com/tuchinsun/phoronix/master/script/pts-result.sh
+      chmod +x /usr/local/bin/pts-result.sh
+      /pts/phoronix-test-suite install pts/ramspeed-${globals.vRamspeed} >/var/log/install_ramspeed.log
+      /pts/phoronix-test-suite install pts/fio-${globals.vFio} >/var/log/install_fio.log
+      /pts/phoronix-test-suite install pts/c-ray-${globals.vCray} >/var/log/install_cray.log
+      echo -e "y\nn\nn\nn\nn\ny\nn\n" | /pts/phoronix-test-suite batch-setup >/dev/null
+  runCpuTest:
+    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-cray" /pts/phoronix-test-suite batch-run pts/c-ray-${globals.vCray} >/root/cpu_test
+  runRamTest:
+    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-ramspeed-integer" PRESET_OPTIONS="ramspeed.run-type=Average; ramspeed.benchmark=Integer"  /pts/phoronix-test-suite batch-run pts/ramspeed-${globals.vRamspeed} >/root/ram_test
+    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-ramspeed-float" PRESET_OPTIONS="ramspeed.run-type=Average; ramspeed.benchmark=Floating Point"  /pts/phoronix-test-suite batch-run pts/ramspeed-${globals.vRamspeed} >>/root/ram_test
+  runDiskTest:
+    - cmd [docker]: |-
+       echo 'FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randread" PRESET_OPTIONS="fio.type=randread; fio.engine=Sync; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/tmp" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} | tee /root/disk_test' > /tmp/phoronix_run.sh
+       chmod +x /tmp/phoronix_run.sh
+       screen -d -m /tmp/phoronix_run.sh
+
+    - forEach(item:globals.iteration):
+      - cmd[docker]: pgrep phoronix-test-s || echo 0
+      - if (${response.out} > 0):
+         sleep: ${globals.timeout}
+
+    - cmd [docker]: |-
+       echo 'FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randwrite" PRESET_OPTIONS="fio.type=randwrite; fio.engine=Sync; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/tmp" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} | tee /root/disk_test' > /tmp/phoronix_run.sh
+       chmod +x /tmp/phoronix_run.sh
+       screen -d -m /tmp/phoronix_run.sh
+
+    - forEach(item:globals.iteration):
+      - cmd[docker]: pgrep phoronix-test-s || echo 0
+      - if (${response.out} > 0):
+         sleep: ${globals.timeout}
+
+success: |
+     ### Phoronix Test Finished
+     **Started** ${globals.date}
+     **Region** ${env.region}
+     **Domain** ${env.domain}
+
+     * CPU ${globals.cpu} sec
+     * RAM ${globals.ram} MB/sec
+     * Disk ${globals.disk} MB/sec
+     * RATE ${globals.rate}

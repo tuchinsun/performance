@@ -1,0 +1,79 @@
+type: install
+version: 1.4
+name: Phoronix Performance Test
+logo: http://www.phoronix-test-suite.com/img/ptsLogo.png
+homepage: http://www.phoronix-test-suite.com/
+baseUrl: https://phoronix-test-suite.com/releases/
+description: Open-Source, Automated Benchmarking
+skipNodeEmails: true
+
+settings:
+  fields:
+    - caption: Test CPU
+      type: checkbox
+      name: cpu
+      value: true
+    - caption: Test RAM
+      type: checkbox
+      name: ram
+      value: true
+    - caption: Test Disk I/O
+      type: checkbox
+      name: disk
+      value: true
+    - caption: Environment
+      type: envname
+      name: envName
+      dependsOn: region
+    - caption: Region
+      type: regionlist
+      name: region
+      disableInactive: true
+      selectFirstAvailable: true
+
+    - caption: Password
+      type: string
+      inputType: password
+      name: password
+
+
+onInstall:
+  - install: https://raw.githubusercontent.com/tuchinsun/phoronix/master/phoronix.jps
+    envName: ${settings.envName}
+    region: ${settings.region}
+    settings: ${settings.toJSON()}
+
+  - stopPhoronix
+    envName: ${settings.envName}
+    region: ${settings.region}
+
+  - env.control.DeleteEnv:
+      envName: ${settings.envName}
+      password: ${settings.password}
+
+
+actions:
+  getResult:
+    - cmd [docker]: /usr/local/bin/pts-result.sh --cpu-result
+    - setGlobals:
+        cpu: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --ram-result
+    - setGlobals:
+        ram: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --hdd-result
+    - setGlobals:
+        disk: ${response.out}
+    - cmd [docker]: /usr/local/bin/pts-result.sh --total-rate
+    - setGlobals:
+        rate: ${response.out}
+    - cmd [docker]: date +"%F %T"
+    - setGlobals:
+        date: ${response.out}
+    - log:
+         RESULTS [ ${env.region} ] CPU - ${globals.cpu} RAM - ${globals.ram} DISK - ${globals.disk} RATE - ${globals.rate}
+  stopPhoronix:
+    - jelastic.environment.control.StopEnv:
+        appid: ${env.appid}
+
+success: |
+    ${response.successText}
