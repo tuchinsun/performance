@@ -43,10 +43,6 @@ onInstall:
     region: ${settings.region}
     settings: ${settings.toJSON()}
 
-  - env.control.StopEnv:
-    envName: ${settings.envName}
-    region: ${settings.region}
-
   - env.control.DeleteEnv:
       envName: ${settings.envName}
       password: ${settings.password}
