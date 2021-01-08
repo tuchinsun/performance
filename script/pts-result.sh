@@ -17,8 +17,8 @@ function get_cpu_result {
 }
 
 function get_cpu_rate {
-    cpu_result=$(echo "$1 / 1" | bc)
-    
+    cpu_result=$(echo `get_cpu_result` / 1 | bc)
+
     if [[ $cpu_result -gt ${cpu_raiting[0]} ]]; then
         echo 2
     elif [[ $cpu_result -gt ${cpu_raiting[1]} ]]; then
@@ -39,8 +39,8 @@ function get_ram_result {
 }
 
 function get_ram_rate {
-    ram_result=$( echo "$1 / 1" | bc )
-    
+    ram_result=$(echo `get_ram_result` / 1 | bc)
+
     if [[ $ram_result -lt ${ram_raiting[0]} ]]; then
         echo 2
     elif [[ $ram_result -lt ${ram_raiting[1]} ]]; then
@@ -61,8 +61,8 @@ function get_hdd_result {
 }
 
 function get_hdd_rate {
-    hdd_result=$(echo "$1 / 1" | bc)
-    
+    hdd_result=$(echo `get_hdd_result` / 1 | bc)
+
     if [[ $hdd_result -lt ${hdd_raiting[0]} ]]; then
         echo 2
     elif [[ $hdd_result -lt ${hdd_raiting[1]} ]]; then
@@ -75,13 +75,10 @@ function get_hdd_rate {
 }
 
 function get_total_rate {
-    cpu_result=$(get_cpu_result)
-    ram_result=$(get_ram_result)
-    hdd_result=$(get_hdd_result)
 
-    cpu=$(get_cpu_rate $cpu_result)
-    ram=$(get_ram_rate $ram_result)
-    hdd=$(get_hdd_rate $hdd_result)
+    cpu=$(get_cpu_rate)
+    ram=$(get_ram_rate)
+    hdd=$(get_hdd_rate)
 
     echo "$cpu*0.7 + $ram*0.15 + $hdd*0.15" | bc
 }
@@ -114,7 +111,7 @@ while [[ $# -ge 1 ]]; do
         get_hdd_result
         shift
         ;;
-        
+
         --cpu-rate)
         get_cpu_rate
         shift
@@ -134,7 +131,7 @@ while [[ $# -ge 1 ]]; do
         get_total_rate
         shift
         ;;
-        
+
         *)
         print_help
         exit 0

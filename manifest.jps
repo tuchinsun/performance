@@ -21,6 +21,10 @@ settings:
       type: checkbox
       name: disk
       value: true
+    - caption: Delete Phoronix after test
+      type: checkbox
+      name: deleteEnv
+      value: true
     - caption: Environment
       type: envname
       name: envName
@@ -36,6 +40,7 @@ settings:
       name: password
 
 
+
 onInstall:
   - install: phoronix.jps
     envName: ${settings.envName}
@@ -43,9 +48,13 @@ onInstall:
     settings: ${settings.toJSON()}
   - set:
       successText: ${response.successText}
-  - env.control.DeleteEnv:
-    envName: ${settings.envName}
-    password: ${settings.password}
+  - if ( ${settings.deleteEnv} ): deletePhoronix
   - return:
       type: success
       message: ${this.successText}
+
+actions:
+  deletePhoronix:
+    env.control.DeleteEnv:
+    envName: ${settings.envName}
+    password: ${settings.password}
