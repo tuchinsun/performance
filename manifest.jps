@@ -30,7 +30,6 @@ settings:
       name: region
       disableInactive: true
       selectFirstAvailable: true
-
     - caption: Password
       type: string
       inputType: password
@@ -43,9 +42,13 @@ onInstall:
     region: ${settings.region}
     settings: ${settings.toJSON()}
 
+  - set:
+    successText: ${response.successText}
+
   - env.control.DeleteEnv:
       envName: ${settings.envName}
       password: ${settings.password}
 
-success: |
-    ${response.successText}
+  - return:
+    type: success
+    message: ${this.successText}
