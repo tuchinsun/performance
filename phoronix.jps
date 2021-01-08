@@ -80,7 +80,7 @@ actions:
     - setGlobals:
         date: ${response.out}
     - log:
-         RESULTS [ ${env.region} ] CPU - ${globals.cpu} RAM - ${globals.ram} DISK - ${globals.disk} RATE - ${globals.rate}
+         RESULTS [ ${env.region} ] CPU - ${globals.cpu} (${globals.cpu_rate});  RAM - ${globals.ram} (${globals.ram_rate}); DISK - ${globals.disk} (${globals.hdd_rate}); RATE - ${globals.rate}
 
 
   stopPhoronix:
