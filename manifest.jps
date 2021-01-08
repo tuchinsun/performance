@@ -42,10 +42,10 @@ onInstall:
     region: ${settings.region}
     settings: ${settings.toJSON()}
   - set:
-    successText: ${response.successText}
+      successText: ${response.successText}
   - env.control.DeleteEnv:
     envName: ${settings.envName}
     password: ${settings.password}
   - return:
-    type: success
-    message: ${this.successText}
+      type: success
+      message: ${this.successText}
