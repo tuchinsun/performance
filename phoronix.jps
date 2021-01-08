@@ -3,7 +3,7 @@ version: 1.4
 name: Phoronix Performance Test
 logo: http://www.phoronix-test-suite.com/img/ptsLogo.png
 homepage: http://www.phoronix-test-suite.com/
-baseUrl: https://phoronix-test-suite.com/releases/
+baseUrl: https://raw.githubusercontent.com/tuchinsun/performance/main/
 description: Open-Source, Automated Benchmarking
 skipNodeEmails: true
 
@@ -34,7 +34,7 @@ actions:
       mkdir -p /pts
       yum install -y autoconf automake bc bzip2 curl epel-release expat-devel gcc gcc-c++ glibc-static jq jsoup libaio-devel make patch php-cli php-xml unzip wget >/dev/null 2>&1
       wget -qO- https://phoronix-test-suite.com/releases/phoronix-test-suite-${globals.vPhoronix}.tar.gz | tar -xz --strip-components=1 -C /pts
-      wget -qO /usr/local/bin/pts-result.sh https://raw.githubusercontent.com/tuchinsun/phoronix/master/script/pts-result.sh
+      wget -qO /usr/local/bin/pts-result.sh ${baseUrl}/script/pts-result.sh
       chmod +x /usr/local/bin/pts-result.sh
       /pts/phoronix-test-suite install pts/ramspeed-${globals.vRamspeed} >/var/log/install_ramspeed.log
       /pts/phoronix-test-suite install pts/fio-${globals.vFio} >/var/log/install_fio.log
