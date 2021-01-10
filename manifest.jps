@@ -24,7 +24,13 @@ settings:
     - caption: Delete Phoronix after test
       type: checkbox
       name: deleteEnv
-      value: true
+      value: false
+      showIf:
+        true:
+          - caption: Password
+            type: string
+            inputType: password
+            name: password
     - caption: Environment
       type: envname
       name: envName
@@ -34,12 +40,6 @@ settings:
       name: region
       disableInactive: true
       selectFirstAvailable: true
-    - caption: Password
-      type: string
-      inputType: password
-      name: password
-
-
 
 onInstall:
   - install: phoronix.jps
