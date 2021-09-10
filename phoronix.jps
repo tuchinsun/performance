@@ -53,8 +53,8 @@ actions:
     - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-ramspeed-integer" PRESET_OPTIONS="ramspeed.run-type=Average; ramspeed.benchmark=Integer"  /pts/phoronix-test-suite batch-run pts/ramspeed-${globals.vRamspeed} >/root/ram_test
     - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-ramspeed-float" PRESET_OPTIONS="ramspeed.run-type=Average; ramspeed.benchmark=Floating Point"  /pts/phoronix-test-suite batch-run pts/ramspeed-${globals.vRamspeed} >>/root/ram_test
   runDiskTest:
-    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randread" PRESET_OPTIONS="fio.type=randread; fio.engine=Linux AIO; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/root" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} > /root/disk_test
-    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randwrite" PRESET_OPTIONS="fio.type=randwrite; fio.engine=Linux AIO; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/root" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} >> /root/disk_test
+    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randread" PRESET_OPTIONS="fio.type=Random Read; fio.engine=Linux AIO; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/root" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} > /root/disk_test
+    - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-fio-randwrite" PRESET_OPTIONS="fio.type=Random Write; fio.engine=Linux AIO; fio.buffered=No; fio.direct=Yes; fio.size=4k; fio.auto-disk-mount-points=/root" /pts/phoronix-test-suite batch-run pts/fio-${globals.vFio} >> /root/disk_test
 
   getResult:
     - cmd [docker]: /usr/local/bin/pts-result.sh --cpu-result
