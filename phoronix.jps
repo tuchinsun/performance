@@ -18,7 +18,7 @@ globals:
 nodes:
 - cloudlets: 10
   displayName: Phoronix Test Suite
-  image: jelastic/centos7:7.9
+  image: jelastic/centosvps:7.9
   extip: false
 
 onInstall:
