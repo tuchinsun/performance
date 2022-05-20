@@ -3,7 +3,8 @@ version: 1.4
 name: Phoronix Performance Test
 logo: http://www.phoronix-test-suite.com/img/ptsLogo.png
 homepage: http://www.phoronix-test-suite.com/
-baseUrl: https://raw.githubusercontent.com/tuchinsun/performance/main/
+baseUrl: https://raw.githubusercontent.com/tuchinsun/performance/main
+https://raw.githubusercontent.com/tuchinsun/performance/main/script/pts-result.sh
 description: Open-Source, Automated Benchmarking
 skipNodeEmails: true
 
