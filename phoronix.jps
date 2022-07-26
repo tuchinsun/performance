@@ -47,6 +47,8 @@ actions:
       /pts/phoronix-test-suite user-config-set DynamicRunCount=FALSE >/dev/null
       /pts/phoronix-test-suite user-config-set LimitDynamicToTestLength=5 >/dev/null
       /pts/phoronix-test-suite user-config-set StandardDeviationThreshold=10.0 >/dev/null
+      /pts/phoronix-test-suite user-config-set ColoredConsole=AUTO >/dev/null
+      /pts/phoronix-test-suite unload_module update_checker >/dev/null
   runCpuTest:
     - cmd [docker]: FORCE_TIMES_TO_RUN=3 TEST_RESULTS_IDENTIFIER="jelastic" TEST_RESULTS_NAME="jelastic-cray" /pts/phoronix-test-suite batch-run pts/c-ray-${globals.vCray} >/root/cpu_test
   runRamTest:
