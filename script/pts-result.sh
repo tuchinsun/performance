@@ -58,8 +58,8 @@ function get_ram_rate {
 ### HDD
 
 function get_hdd_result {
-    $PTS result-file-to-json jelastic-fio-randread
-    $PTS result-file-to-json jelastic-fio-randwrite
+    $PTS result-file-to-json jelastic-fio-randread  >/dev/null
+    $PTS result-file-to-json jelastic-fio-randwrite >/dev/null
     HDDR=$( jq -r '.results[] | select(.scale=="MB/s") | .results.jelastic.value'  </root/jelastic-fio-randread.json)
     HDDW=$( jq -r '.results[] | select(.scale=="MB/s") | .results.jelastic.value'  </root/jelastic-fio-randwrite.json)
     echo "( $HDDR + $HDDW )  / 2" | bc -l | xargs printf '%.2f'
